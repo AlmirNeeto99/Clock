@@ -12,17 +12,17 @@ public class Clock implements ClockInterface, ActionListener {
 
     @Override
     public int getHours() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.hours;
     }
 
     @Override
     public int getMinutes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.minutes;
     }
 
     @Override
     public int getSeconds() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.seconds;
     }
 
     @Override
@@ -31,13 +31,13 @@ public class Clock implements ClockInterface, ActionListener {
     }
 
     @Override
-    public void setMinute(int minute) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setMinute(int minutes) {
+        this.minutes = minutes;
     }
 
     @Override
-    public void setSecond(int second) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setSecond(int seconds) {
+        this.seconds = seconds;
     }
 
     @Override
