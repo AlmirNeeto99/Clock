@@ -3,7 +3,7 @@ package Model;
 public final class Time {
 
     public final String time(int hours, int minutes, int seconds) {
-        String ret = "Now: ";
+        String ret = "";
         if (hours < 10) {
             ret += "0";
         }

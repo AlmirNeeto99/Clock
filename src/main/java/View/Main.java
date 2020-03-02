@@ -1,29 +1,23 @@
 package View;
 
 import Model.Clock;
+import View.Window;
+
 import javax.swing.Timer;
 
 public class Main {
 
     private int delay = 1000;
     private Clock clock = new Clock();
-    private Timer timer = new Timer(delay, clock);
+    private Timer timer1 = new Timer(250, new Window(clock));
+    private Timer timer2 = new Timer(delay, clock);
 
     public Main() {
-        timer.start();
-    }
-
-    private void printClock() {
-        System.out.println(clock.getTime());
+        timer1.start();
+        timer2.start();        
     }
 
     public static void main(String[] args) throws InterruptedException {
-
-        Main m = new Main();
-
-        while (true) {
-            m.printClock();
-            Thread.sleep(1000);
-        }
+        new Main();
     }
 }

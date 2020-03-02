@@ -27,31 +27,43 @@ public class Clock implements ClockInterface, ActionListener {
 
     @Override
     public void setHour(int hours) {
-        this.hours = hours;
+        if (hours >= 24) {
+            this.hours = 0;
+        } else {
+            this.hours = hours;
+        }
     }
 
     @Override
     public void setMinute(int minutes) {
-        this.minutes = minutes;
+        if (minutes >= 60) {
+            this.minutes = 0;
+        } else {
+            this.minutes = minutes;
+        }
     }
 
     @Override
     public void setSecond(int seconds) {
-        this.seconds = seconds;
+        if (seconds >= 60) {
+            this.seconds = 0;
+        } else {
+            this.seconds = seconds;
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
         this.seconds += 1;
-        if (this.seconds == 60) {
+        if (this.seconds >= 60) {
             this.seconds = 0;
             this.minutes += 1;
         }
-        if (this.minutes == 60) {
+        if (this.minutes >= 60) {
             this.minutes = 0;
             this.hours += 1;
         }
-        if (this.hours == 24) {
+        if (this.hours >= 24) {
             this.hours = 0;
         }
     }
