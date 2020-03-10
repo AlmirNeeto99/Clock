@@ -3,6 +3,8 @@ package View;
 import Model.Clock;
 import View.Window;
 
+import java.io.IOException;
+
 import javax.swing.Timer;
 
 public class Main {
@@ -14,10 +16,10 @@ public class Main {
 
     public Main() {
         timer1.start();
-        timer2.start();        
+        timer2.start();
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         new Main();
     }
 }
