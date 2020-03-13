@@ -2,6 +2,7 @@ package Model;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import Util.EntryTable;
 
@@ -21,9 +22,18 @@ public class MainServer extends ServerSocket {
             @Override
             public void run() {
                 while (true) {
-
+                    try {
+                        Socket s = accept();
+                    } catch (IOException e) {
+                    }
                 }
             }
         };
+        listen_thread.start();
+    }
+
+    public void closeServer() throws IOException {
+        this.close();
+        listen_thread.interrupt();
     }
 }
