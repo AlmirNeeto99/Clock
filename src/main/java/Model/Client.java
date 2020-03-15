@@ -5,11 +5,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Client implements Runnable {
+public abstract class Client implements Runnable {
 
     private Socket client;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+
+    private boolean isOn = true;
 
     public Client(Socket s) throws IOException {
         this.client = s;
@@ -19,26 +21,27 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (isOn) {
             String message = null;
-
             try {
                 message = (String) in.readObject();
                 if (message != null) {
-                    System.out.println(message);
+                    handleRequest(message);
                 }
             } catch (IOException | ClassNotFoundException ex) {
-                System.out.println("Oops...");
+                //ex.printStackTrace();
             }
         }
     }
 
-    public void makeRequest(String message) throws IOException {
-        out.writeObject(message);
-        out.close();
+    public void close() {
+        this.isOn = false;
     }
 
-    public void close() {
-        this.close();
+    public abstract void handleRequest(String message);
+
+    public void sendResponse(String message) throws IOException {
+        out.writeObject(message);
+        out.flush();
     }
 }
