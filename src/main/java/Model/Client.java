@@ -29,13 +29,17 @@ public abstract class Client implements Runnable {
                     handleRequest(message);
                 }
             } catch (IOException | ClassNotFoundException ex) {
-                //ex.printStackTrace();
+                // ex.printStackTrace();
             }
         }
     }
 
     public void close() {
         this.isOn = false;
+    }
+
+    public Socket getClient() {
+        return this.client;
     }
 
     public abstract void handleRequest(String message);

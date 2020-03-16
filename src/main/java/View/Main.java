@@ -14,7 +14,7 @@ public class Main {
     private Timer timer1 = new Timer(250, new Window(clock));
     private Timer timer2 = new Timer(delay, clock);
 
-    public Main() {
+    public Main() throws IOException {
         timer1.start();
         timer2.start();
     }
