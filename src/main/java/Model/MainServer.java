@@ -76,12 +76,26 @@ public class MainServer extends ServerSocket {
                         this.sendResponse(response.toJSONString());
                         break;
                     case "get_server":
-                        response.put("server", return_server());
+                        this.sendResponse(return_server());
+                        break;
+                    case "im_server":
+                        String host_sv = (String) obj.get("host");
+                        int port_sv = Integer.parseInt(obj.get("port").toString());
+                        register_server(host_sv, port_sv);
                         this.sendResponse(response.toJSONString());
                         break;
                 }
+                close();
             } catch (Exception e) {
-                // TODO: handle exception
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void register_server(String host, int port) {
+        for (Set set : table) {
+            if (set.getHost().equals(host) && set.getPort() == port) {
+                set.setModel("server");
             }
         }
     }
@@ -109,10 +123,16 @@ public class MainServer extends ServerSocket {
     private String return_server() {
         for (Set s : table) {
             if (s.getModel().equals("server")) {
-                return s.getHost() + ":" + s.getPort();
+                JSONObject obj = new JSONObject();
+                obj.put("status", "ok");
+                obj.put("host", s.getHost());
+                obj.put("port", s.getPort());
+                return obj.toString();
             }
         }
-        return null;
+        JSONObject no_server = new JSONObject();
+        no_server.put("status", "no_server");
+        return no_server.toString();
     }
 
     private class Set {

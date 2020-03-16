@@ -6,13 +6,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -180,20 +177,5 @@ public class MainServerTest {
 
         s1.close();
         s2.close();
-    }
-
-    private void get_ip() {
-        InetAddress ip;
-        String hostname;
-        try {
-            ip = InetAddress.getLocalHost();
-            hostname = ip.getHostName();
-            System.out.println("Your current IP address : " + ip.getHostAddress());
-            System.out.println("Your current Hostname : " + hostname);
-
-        } catch (UnknownHostException e) {
-
-            e.printStackTrace();
-        }
     }
 }
