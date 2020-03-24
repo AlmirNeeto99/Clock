@@ -26,6 +26,7 @@ public class MainServer extends ServerSocket {
     }
 
     public void start_listen() {
+        System.out.println("Server is listening at:" + port);
         listen_thread = new Thread() {
             @Override
             public void run() {

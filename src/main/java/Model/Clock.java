@@ -1,14 +1,20 @@
 package Model;
 
 import Util.ClockInterface;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Random;
 
-public class Clock implements ClockInterface, ActionListener {
+public class Clock implements ClockInterface {
 
     private int hours;
     private int minutes;
     private int seconds;
+
+    public Clock() {
+        Random ran = new Random();
+        setHour(ran.nextInt(24));
+        setMinute(ran.nextInt(60));
+        setSecond(ran.nextInt(60));
+    }
 
     @Override
     public int getHours() {
@@ -52,8 +58,7 @@ public class Clock implements ClockInterface, ActionListener {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void att() {
         this.seconds += 1;
         if (this.seconds >= 60) {
             this.seconds = 0;

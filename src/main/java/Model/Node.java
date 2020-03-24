@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
@@ -17,9 +16,17 @@ public class Node extends ServerSocket {
     private Thread server_listening;
     private boolean isServer = false;
     private ArrayList<Thread> clients;
+    private Clock clock;
 
-    public Node(int port) throws IOException {
+    public Node(int port, Clock c) throws IOException {
         super(port);
+        this.clock = c;
+    }
+
+    public void att_clock(int hours, int minutes, int seconds){
+        clock.setHour(hours);
+        clock.setMinute(minutes);
+        clock.setSecond(seconds);
     }
 
     public void start_server() {
@@ -90,9 +97,9 @@ public class Node extends ServerSocket {
                 JSONObject response = new JSONObject();
                 switch ((String) obj.get("cmd")) {
                     case "sync":
-                        response.put("hours", 15);
-                        response.put("minutes", 23);
-                        response.put("seconds", 17);
+                        response.put("hours", clock.getHours());
+                        response.put("minutes", clock.getMinutes());
+                        response.put("seconds", clock.getSeconds());
                         this.sendResponse(response.toJSONString());
                         break;
                 }

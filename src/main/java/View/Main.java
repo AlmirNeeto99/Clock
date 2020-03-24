@@ -15,32 +15,39 @@ public class Main {
 
     private int delay = 1000;
     private Clock clock;
-    private Timer timer1;
-    private Timer timer2;
-    private Controller controller = new Controller("127.0.0.1", 4000);
+
+    private Timer timer;
+    private static Controller controller = new Controller("127.0.0.1", 4000);
+    private static Window win;
 
     public Main() throws IOException {
 
         System.out.println("Welcome to tic tac:");
         System.out.println("1 - MainServer");
         System.out.println("2 - Node");
-        System.out.println("3 - Node");
         int choice = new Scanner(System.in).nextInt();
 
-        clock = new Clock();
-        timer1 = new Timer(250, new Window(clock));
-        timer2 = new Timer(delay, clock);
-        timer1.start();
-        timer2.start();
+        System.out.println("Type the port to listen to:");
+        int port = new Scanner(System.in).nextInt();
 
         if (choice == 1) {
-            new MainServer(4000).start_listen();
+            new MainServer(port).start_listen();
 
-        } else if (choice == 2) {
-            controller.start(5000);
         } else {
-            controller.start(6000);
+            clock = new Clock();
+            win = new Window(clock);
+            timer = new Timer(250, win);
+            timer.start();
+            controller.start(port, clock);
         }
+    }
+
+    public static void changeModel(String model){
+        win.setNodeModel(model);
+    }
+
+    public static void setTime(int hours, int minutes, int seconds, int delay){
+        controller.setClockTime(hours, minutes, seconds, delay);
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
