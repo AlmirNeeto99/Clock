@@ -23,11 +23,10 @@ public class Controller {
     private int clockServerPort;
 
     private boolean isServer;
-    private int priorityNumber;
 
     private static Node node;
 
-    private int testPort;
+    private int localPort;
 
     private Thread sync_thread;
 
@@ -66,9 +65,9 @@ public class Controller {
         Random r = new Random();
         delay = r.nextInt(500) + 500;
         System.out.println("Sorted delay:" + delay);
-        testPort = port;
+        localPort = port;
         try {
-            node = new Node(testPort, clock);
+            node = new Node(localPort, clock);
             System.out.println("Connected to main server");
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -93,7 +92,20 @@ public class Controller {
                     try {
                         sync();
                     } catch (IOException | ClassNotFoundException | ParseException e) {
-                        e.printStackTrace();
+                        if (e instanceof IOException) {
+                            try {
+                                pingServer();
+                            } catch (Exception ex) {
+                                try {
+                                    server_is_down();
+                                    sync_thread.interrupt();
+                                    break;
+                                } catch (Exception e1) {
+                                    // TODO: handle exception
+                                }
+                            }
+                            // System.out.println("foi io exception");
+                        }
                     }
                     try {
                         sleep(3000);
@@ -107,6 +119,63 @@ public class Controller {
         sync_thread.start();
     }
 
+    private void server_is_down() throws ClassNotFoundException, IOException, ParseException {
+        JSONObject obj = new JSONObject();
+        obj.put("cmd", "server_down");
+        String response = node.makeRequest(mainServerHost, mainServerPort, obj.toString());
+        JSONObject res = (JSONObject) new JSONParser().parse(response);
+
+        if (res.get("status").equals("higher_priority")) {
+            String host = res.get("host").toString();
+            int port = Integer.parseInt(res.get("port").toString());
+
+            if (port == localPort) {
+                Main.changeModel("Server");
+                becomeServer();
+                node.start_server();
+                isServer = true;
+            } else {
+                try {
+                    Socket ping = new Socket(host, port);
+                    JSONObject req = new JSONObject();
+                    req.put("cmd", "bully");
+                    String response2 = node.makeRequest(host, port, res.toString());
+
+                    JSONObject res2 = (JSONObject) new JSONParser().parse(response2);
+                    if (res2.get("status").equals("alive")) {
+                        JSONObject alive = new JSONObject();
+                        obj.put("cmd", "alive");
+                        obj.put("port", res2.get("port"));
+                        String alive_res = node.makeRequest(mainServerHost, mainServerPort, obj.toString());
+                        JSONObject alive_obj = (JSONObject) new JSONParser().parse(response);
+                    } else {
+                        JSONObject alive = new JSONObject();
+                        obj.put("cmd", "no_answer");
+                        String ip = get_ip();
+                        obj.put("host", ip);
+                        obj.put("port", localPort);
+                        String alive_res = node.makeRequest(mainServerHost, mainServerPort, obj.toString());
+                        JSONObject alive_obj = (JSONObject) new JSONParser().parse(response);
+                        getServer();
+                        if (!isServer) {
+                            sync_forever();
+                        }
+
+                        if (alive_obj.get("status").equals("you_serve")) {
+                            Main.changeModel("Server");
+                            becomeServer();
+                            node.start_server();
+                            isServer = true;
+                        }
+                    }
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
+            }
+
+        }
+    }
+
     private void subscribe() throws ClassNotFoundException, IOException, ParseException {
         JSONObject obj = new JSONObject();
 
@@ -114,7 +183,7 @@ public class Controller {
         if (ip != null) {
             obj.put("cmd", "subscribe");
             obj.put("host", ip);
-            obj.put("port", testPort);
+            obj.put("port", localPort);
             String response = node.makeRequest(mainServerHost, mainServerPort, obj.toString());
             JSONObject res = (JSONObject) new JSONParser().parse(response);
             if (res.get("status").equals("duplicate")) {
@@ -154,7 +223,7 @@ public class Controller {
         try {
             obj.put("cmd", "im_server");
             obj.put("host", get_ip());
-            obj.put("port", testPort);
+            obj.put("port", localPort);
             String response = null;
             response = node.makeRequest(mainServerHost, mainServerPort, obj.toString());
             JSONObject res = (JSONObject) new JSONParser().parse(response);

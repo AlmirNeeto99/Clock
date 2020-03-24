@@ -13,7 +13,6 @@ import Controller.Controller;
 
 public class Main {
 
-    private int delay = 1000;
     private Clock clock;
 
     private Timer timer;
@@ -42,12 +41,13 @@ public class Main {
         }
     }
 
-    public static void changeModel(String model){
-        win.setNodeModel(model);
+    public static void changeModel(String model) {
+        win.setNodeModel(model); // Altera a string que representa se o nó é client ou server
     }
 
-    public static void setTime(int hours, int minutes, int seconds, int delay){
-        controller.setClockTime(hours, minutes, seconds, delay);
+    public static void setTime(int hours, int minutes, int seconds, int delay) {
+        controller.setClockTime(hours, minutes, seconds, delay); // Altera o horário do relógio baseado no valor manual
+                                                                 // passado pelo GUI
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {

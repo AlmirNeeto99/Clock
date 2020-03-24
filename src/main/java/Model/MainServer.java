@@ -20,6 +20,8 @@ public class MainServer extends ServerSocket {
     private int port;
     private Thread listen_thread;
 
+    private boolean bullying = false;
+
     public MainServer(int port) throws IOException {
         super(port);
         this.port = port;
@@ -77,7 +79,11 @@ public class MainServer extends ServerSocket {
                         this.sendResponse(response.toJSONString());
                         break;
                     case "get_server":
-                        this.sendResponse(return_server());
+                        if (bullying) {
+                            this.sendResponse("{\"status\": \"bullying\"}");
+                        } else {
+                            this.sendResponse(return_server());
+                        }
                         break;
                     case "im_server":
                         String host_sv = (String) obj.get("host");
@@ -85,12 +91,52 @@ public class MainServer extends ServerSocket {
                         register_server(host_sv, port_sv);
                         this.sendResponse(response.toJSONString());
                         break;
+                    case "server_down":
+                        bullying = true;
+                        server_is_down();
+                        this.sendResponse(get_higher_priority());
+                        break;
+                    case "no_answer":
+                        bullying = false;
+                        String host_sv_2 = (String) obj.get("host");
+                        int port_sv_2 = Integer.parseInt(obj.get("port").toString());
+                        register_server(host_sv_2, port_sv_2);
+                        this.sendResponse("{\"status\": \"you_serve\"}");
+                        break;
                 }
                 close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void server_is_down() {
+        Set server = null;
+        for (Set set : table) {
+            if (set.getModel().equals("server")) {
+                server = set;
+            }
+        }
+        table.remove(server);
+    }
+
+    private String get_higher_priority() {
+        String host = null;
+        int port = 0;
+        int prior = 0;
+        for (Set set : table) {
+            if (set.getPrior() > prior) {
+                prior = 0;
+                host = set.getHost();
+                port = set.getPort();
+            }
+        }
+        JSONObject o = new JSONObject();
+        o.put("status", "higher_priority");
+        o.put("host", host);
+        o.put("port", port);
+        return o.toString();
     }
 
     private void register_server(String host, int port) {

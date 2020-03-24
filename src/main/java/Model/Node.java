@@ -23,7 +23,7 @@ public class Node extends ServerSocket {
         this.clock = c;
     }
 
-    public void att_clock(int hours, int minutes, int seconds){
+    public void att_clock(int hours, int minutes, int seconds) {
         clock.setHour(hours);
         clock.setMinute(minutes);
         clock.setSecond(seconds);
@@ -72,9 +72,7 @@ public class Node extends ServerSocket {
         ObjectInputStream in = new ObjectInputStream(con.getInputStream());
 
         String ret = (String) in.readObject();
-        System.out.println(ret);
         while (ret == null) {
-            System.out.println(ret);
             ret = (String) in.readObject();
         }
         con.close();
@@ -100,6 +98,13 @@ public class Node extends ServerSocket {
                         response.put("hours", clock.getHours());
                         response.put("minutes", clock.getMinutes());
                         response.put("seconds", clock.getSeconds());
+                        this.sendResponse(response.toJSONString());
+                        break;
+                    case "bully":
+                        response.put("status", "alive");
+                        response.put("port", this.getClient().getPort());
+                        isServer = true;
+                        start_server();
                         this.sendResponse(response.toJSONString());
                         break;
                 }
