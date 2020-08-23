@@ -175,7 +175,7 @@ public class Controller {
 
         }
     }
-
+    /*Inscreve um nó no servidor principal*/
     private void subscribe() throws ClassNotFoundException, IOException, ParseException {
         JSONObject obj = new JSONObject();
 
@@ -192,7 +192,7 @@ public class Controller {
             }
         }
     }
-
+    /*Pega o IP e port do nó atuando como servidor*/
     private void getServer() {
         JSONObject obj = new JSONObject();
         try {
@@ -216,7 +216,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
+    /*Caso não haja nó servidor, se torna um*/
     private void becomeServer() {
         System.out.println("Becoming server");
         JSONObject obj = new JSONObject();
